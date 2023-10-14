@@ -62,8 +62,12 @@ class Task2 extends Component{
                     else if (InputCharT=='/') result/=(InputNo2T*1);
                     InputNo1T=result+'';
                     InputNo2T='';
-                    // InputCharT=''
-                    if (params=='=') document.getElementById('ExpressionInput').innerHTML=InputNo1T;
+                    InputCharT=params
+                    if (params=='=') 
+                    {
+                        document.getElementById('ExpressionInput').innerHTML=InputNo1T;
+                        InputCharT=''
+                    }
                 }
             }
         }
@@ -180,4 +184,3 @@ class Task2 extends Component{
 }
 
 export default Task2
-// Edo error vastundi = kottaka
