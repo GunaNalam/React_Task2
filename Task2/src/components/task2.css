@@ -1,0 +1,26 @@
+.background-gradient{
+    background: linear-gradient(to right, #33ccff 0%, #00ff99 100%);
+    height: 46.5rem;
+}
+
+.calc-display{
+    background-color: #172d67;
+    color: white;
+}
+
+.calc-body{
+    background-color: #070b26;
+    color: white;
+}
+
+.pb-5-1{
+    padding-bottom: 5rem;
+}
+
+/* .padding-number{
+    padding-top: 9.5px;
+} */
+
+.col-md-4>button{
+    margin-top: 12px;
+}
