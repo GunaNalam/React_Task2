@@ -7,78 +7,68 @@ class Task2 extends Component{
     {
         super(props)
         this.state ={
-            InputNo1: '',InputNo2: '',InputChar:'',previous: ''
+            InputNo1: '',InputArray: [],entireValue: ''
         }
     }
     InputFunction = (params) => {
-        let InputNo1T=this.state.InputNo1,InputNo2T=this.state.InputNo2,InputCharT=this.state.InputChar;
-        if (params!='=') 
-        {
-            let temp=document.getElementById('ExpressionInput');
-            if (params=='b') {
-                if (InputNo1T=='Infinity' || InputNo1T.length>10)
+        let InputNo1T=this.state.InputNo1,InputNo2T=this.state.InputArray,entireValueT=this.state.entireValue;
+        if (params*1>=0 &&  params*1<=9){
+            InputNo1T+=params;
+            entireValueT+=params
+        }
+        else{
+            if (params=='='){
+                InputNo2T.push(InputNo1T);
+                InputNo1T='';
+                let Temp=[InputNo2T[0]];
+                for (let i=1;i<InputNo2T.length;i++)
+                    Temp.push((InputNo2T[i]=='x' && i<InputNo2T.length-1)?((Temp.pop()*1)*(InputNo2T[++i]*1)+''):InputNo2T[i]);
+                InputNo2T=Temp;
+                Temp=[InputNo2T[0]];
+                for (let i=1;i<InputNo2T.length;i++)
+                    Temp.push((InputNo2T[i]=='/' && i<InputNo2T.length-1)?((Temp.pop()*1)/(InputNo2T[++i]*1)+''):InputNo2T[i]);
+                InputNo2T=Temp;
+                Temp=[InputNo2T[0]];
+                for (let i=1;i<InputNo2T.length;i++)
+                    Temp.push((InputNo2T[i]=='+' && i<InputNo2T.length-1)?((Temp.pop()*1)+(InputNo2T[++i]*1)+''):InputNo2T[i]);
+                InputNo2T=Temp;
+                Temp=[InputNo2T[0]];
+                for (let i=1;i<InputNo2T.length;i++)
+                    Temp.push((InputNo2T[i]=='-' && i<InputNo2T.length-1)?((Temp.pop()*1)-(InputNo2T[++i]*1)+''):InputNo2T[i]);   
+                InputNo2T=[];
+                entireValueT=Temp[0];
+                InputNo1T=Temp[0];
+            }
+            else if(params=='b'){
+                if (entireValueT.length!=0) entireValueT=entireValueT.slice(0,-1);
+                if (InputNo1T.length!=0){
+                    InputNo1T=InputNo1T.slice(0,-1);
+                }
+                else if (InputNo2T.length!=0){
+                    let temp=InputNo2T.pop().slice(0,-1);
+                    if (temp.length!=0){
+                        InputNo2T.push(temp);
+                    }
+                } 
+            }
+            else {
+                if (params=='.') 
                 {
-                    document.getElementById('ExpressionInput').innerHTML='';
-                    InputNo1T='';
+                    entireValueT+=params
+                    InputNo1T+=params
                 }
-                else {
-                    let content=temp.innerHTML;
-                    content=content.substring(0,content.length-1);
-                    temp.innerHTML=content;
-                    if (InputNo2T!='') InputNo2T=InputNo2T.substring(0,InputNo2T.length-1);
-                    else if (InputCharT!='') InputCharT='';
-                    else if (InputNo1T!='') InputNo1T=InputNo1T.substring(0,InputNo1T.length-1);
-                }
-            }
-            else if (!(this.state.previous*1>=0 && this.state.previous*1<=9) && !(params*1>=0 && params*1<=9) && InputCharT!='') {
-                alert("Invalid Expression!!");
-                return; 
-            }
-            else temp.innerHTML+=params;
-        }
-        if (InputCharT=='')
-        {
-            if (params*1>=0 && params*1<=9) InputNo1T+=params;
-            else if (params!='b')
-            {
-                if (params=='.') InputNo1T+=params;
-                else InputCharT=params;
-            }
-        }
-        else {  
-            if (params*1>=0 && params*1<=9) InputNo2T+=params;
-            else
-            {
-                if (params!='b') {
-                    if (params=='.')
-                    {
-                        InputNo2T+=params;
-                        return;
-                    }
-                    let result=InputNo1T*1;
-                    if (InputCharT=='-') result-=(InputNo2T*1);
-                    else if (InputCharT=='+') result+=(InputNo2T*1);
-                    else if (InputCharT=='x') result*=(InputNo2T*1);
-                    else if (InputCharT=='/') result/=(InputNo2T*1);
-                    InputNo1T=result+'';
-                    InputNo2T='';
-                    InputCharT=params
-                    if (params=='=') 
-                    {
-                        document.getElementById('ExpressionInput').innerHTML=InputNo1T;
-                        InputCharT=''
-                    }
+                else{
+                    entireValueT+=params
+                    if (InputNo1T!='') InputNo2T.push(InputNo1T);
+                    InputNo2T.push(params);
+                    InputNo1T=''
                 }
             }
         }
-        console.log("A1: ",InputNo1T);
-        console.log("B1: ",InputNo2T);
-        console.log("C1: ",InputCharT);
         this.setState({
-            InputNo2: InputNo2T,
             InputNo1: InputNo1T,
-            InputChar: InputCharT,
-            previous: params
+            InputArray: [...InputNo2T],
+            entireValue: entireValueT
         })
     }
     render(){
@@ -92,7 +82,7 @@ class Task2 extends Component{
                                     <FaCalculator/>
                                 </div>
                                 <div className="col-12 mt-2 text-end fs-3" id="ExpressionInput">
-                                    <span className="p-4"></span>
+                                    <span className="p-4">{this.state.entireValue}</span>
                                 </div>
                             </div>
                         </div>
