@@ -1,77 +1,82 @@
-import React,{Component} from "react";
+import React,{Component,useEffect,useState} from "react"
 import "./task2.css"
 import "./bootstrap.css"
 import { FaBackspace, FaEquals, FaMinus, FaPlus, FaTimes, FaDivide, FaCalculator} from "react-icons/fa";
-class Task2 extends Component{
-    constructor(props)
-    {
-        super(props)
-        this.state ={
-            InputNo1: '',InputArray: [],entireValue: ''
-        }
-    }
-    InputFunction = (params) => {
-        let InputNo1T=this.state.InputNo1,InputNo2T=this.state.InputArray,entireValueT=this.state.entireValue;
+const Task2 =() => {
+    const [InputNo1,CInputNo1]=useState('')
+    const [InputArray,CInputArray]=useState([])
+    const [entireValue,CentireValue]=useState('')
+    const InputFunction = (params) => {
+        let InputArrayT=[...InputArray];
         if (params*1>=0 &&  params*1<=9){
-            InputNo1T+=params;
-            entireValueT+=params
+            CInputNo1(InputNo1T=>InputNo1T+params);
+            CentireValue(entireValue=>entireValue+params);
         }
         else{
             if (params=='='){
-                InputNo2T.push(InputNo1T);
-                InputNo1T='';
-                let Temp=[InputNo2T[0]];
-                for (let i=1;i<InputNo2T.length;i++)
-                    Temp.push((InputNo2T[i]=='x' && i<InputNo2T.length-1)?((Temp.pop()*1)*(InputNo2T[++i]*1)+''):InputNo2T[i]);
-                InputNo2T=Temp;
-                Temp=[InputNo2T[0]];
-                for (let i=1;i<InputNo2T.length;i++)
-                    Temp.push((InputNo2T[i]=='/' && i<InputNo2T.length-1)?((Temp.pop()*1)/(InputNo2T[++i]*1)+''):InputNo2T[i]);
-                InputNo2T=Temp;
-                Temp=[InputNo2T[0]];
-                for (let i=1;i<InputNo2T.length;i++)
-                    Temp.push((InputNo2T[i]=='+' && i<InputNo2T.length-1)?((Temp.pop()*1)+(InputNo2T[++i]*1)+''):InputNo2T[i]);
-                InputNo2T=Temp;
-                Temp=[InputNo2T[0]];
-                for (let i=1;i<InputNo2T.length;i++)
-                    Temp.push((InputNo2T[i]=='-' && i<InputNo2T.length-1)?((Temp.pop()*1)-(InputNo2T[++i]*1)+''):InputNo2T[i]);   
-                InputNo2T=[];
-                entireValueT=Temp[0];
-                InputNo1T=Temp[0];
+                InputArrayT.push(InputNo1);
+                let Temp=[InputArrayT[0]];
+                for (let i=1;i<InputArrayT.length;i++)
+                Temp.push((InputArrayT[i]=='x' && i<InputArrayT.length-1)?((Temp.pop()*1)*(InputArrayT[++i]*1)+''):InputArrayT[i]);
+                InputArrayT=[...Temp];
+                Temp=[InputArrayT[0]];
+                for (let i=1;i<InputArrayT.length;i++)
+                Temp.push((InputArrayT[i]=='/' && i<InputArrayT.length-1)?((Temp.pop()*1)/(InputArrayT[++i]*1)+''):InputArrayT[i]);
+                InputArrayT=[...Temp];
+                Temp=[InputArrayT[0]];
+                for (let i=1;i<InputArrayT.length;i++)
+                Temp.push((InputArrayT[i]=='+' && i<InputArrayT.length-1)?((Temp.pop()*1)+(InputArrayT[++i]*1)+''):InputArrayT[i]);
+                InputArrayT=[...Temp];
+                Temp=[InputArrayT[0]];
+                for (let i=1;i<InputArrayT.length;i++)
+                Temp.push((InputArrayT[i]=='-' && i<InputArrayT.length-1)?((Temp.pop()*1)-(InputArrayT[++i]*1)+''):InputArrayT[i]);   
+                InputArrayT=[]
+                CentireValue(Number(Temp[0]).toFixed(3));
+                CInputNo1(Temp[0]);
             }
             else if(params=='b'){
-                if (entireValueT.length!=0) entireValueT=entireValueT.slice(0,-1);
-                if (InputNo1T.length!=0){
-                    InputNo1T=InputNo1T.slice(0,-1);
-                }
-                else if (InputNo2T.length!=0){
-                    let temp=InputNo2T.pop().slice(0,-1);
-                    if (temp.length!=0){
-                        InputNo2T.push(temp);
-                    }
+                if (entireValue.length!=0) CentireValue(entireValue=>entireValue.slice(0,-1));
+                if (InputNo1.length!=0) CInputNo1(InputNo1=>InputNo1.slice(0,-1));
+                else if (InputArrayT.length!=0){
+                    let temp=[...InputArrayT];
+                    temp=temp.pop();
+                    InputArrayT=[...temp];
+                    temp=temp.slice(0,-1)
                 } 
             }
             else {
+                let InputNo1T=InputNo1;
                 if (params=='.') 
                 {
-                    entireValueT+=params
-                    InputNo1T+=params
+                    CInputNo1(InputNo1T=>InputNo1T+params);
+                    CentireValue(entireValue=>entireValue+params);        
                 }
                 else{
-                    entireValueT+=params
-                    if (InputNo1T!='') InputNo2T.push(InputNo1T);
-                    InputNo2T.push(params);
-                    InputNo1T=''
+                    CentireValue(entireValue=>entireValue+params);
+                    if (InputNo1T!='') InputArrayT.push(InputNo1T);
+                    InputArrayT.push(params);
+                    CInputNo1('');
                 }
             }
         }
-        this.setState({
-            InputNo1: InputNo1T,
-            InputArray: [...InputNo2T],
-            entireValue: entireValueT
-        })
+        CInputArray(InputArray=>[...InputArrayT]);
     }
-    render(){
+    const keyDownHandler = event => {
+        const values = document.querySelectorAll(".btn")
+        if (event.key*1>=0 && event.key*1<=9 || event.key=='.') for(let i =0;i<values.length;i++)
+        {
+            if(values[i].textContent==event.key) values[i].click();
+        } 
+        else if (event.key=='+') values[15].click();
+        else if (event.key=='-') values[16].click();
+        else if (event.key=='*') values[14].click();
+        else if (event.key=='/') values[13].click();
+        else if (event.key=='='  || event.key=="Enter") values[11].click();
+        else if (event.key=="Backspace") values[12].click();
+    };
+    useEffect(() => {
+        document.addEventListener('keydown', keyDownHandler);
+    },[]);
         return (
             <div className="background-gradient">
                 <div className="container pt-5">
@@ -81,8 +86,8 @@ class Task2 extends Component{
                                 <div className="col-12 text-start pb-4 pt-2 ps-3">
                                     <FaCalculator/>
                                 </div>
-                                <div className="col-12 mt-2 text-end fs-3" id="ExpressionInput">
-                                    <span className="p-4">{this.state.entireValue}</span>
+                                <div className="col-12 mt-2 text-end fs-3 overflow-auto" id="ExpressionInput">
+                                    <span className="p-4">{entireValue} </span>
                                 </div>
                             </div>
                         </div>
@@ -91,47 +96,47 @@ class Task2 extends Component{
                                 <div className="col-md-8 col-sm-9">
                                     <div className="row">
                                         <div className="col-sm-3 col-md-4 padding-number">
-                                            <button className="btn text-white fs-4" onClick={() =>this.InputFunction(7)}>7</button>
+                                            <button className="btn text-white fs-4 seven" onClick={() => InputFunction(7)}>7</button>
                                         </div>
                                         <div className="col-sm-3 col-md-4 padding-number">
-                                            <button className="btn text-white fs-4" onClick={() =>this.InputFunction(8)}>8</button>
+                                            <button className="btn text-white fs-4 eight" onClick={() => InputFunction(8)}>8</button>
                                         </div>
                                         <div className="col-sm-3 col-md-4 padding-number">
-                                            <button className="btn text-white fs-4" onClick={() =>this.InputFunction(9)}>9</button>
+                                            <button className="btn text-white fs-4 nine" onClick={() => InputFunction(9)}>9</button>
                                         </div>
                                     </div>
                                     <div className="row">
                                         <div className="col-sm-3 col-md-4 padding-number">
-                                            <button className="btn text-white fs-4" onClick={() =>this.InputFunction(4)}>4</button>
+                                            <button className="btn text-white fs-4 four" onClick={() => InputFunction(4)}>4</button>
                                         </div>
                                         <div className="col-sm-3 col-md-4 padding-number">
-                                            <button className="btn text-white fs-4" onClick={() =>this.InputFunction(5)}>5</button>
+                                            <button className="btn text-white fs-4 five" onClick={() => InputFunction(5)}>5</button>
                                         </div>
                                         <div className="col-sm-3 col-md-4 padding-number">
-                                            <button className="btn text-white fs-4" onClick={() =>this.InputFunction(6)}>6</button>
+                                            <button className="btn text-white fs-4 six" onClick={() => InputFunction(6)}>6</button>
                                         </div>
                                         
                                     </div>
                                     <div className="row">
                                         <div className="col-sm-3 col-md-4 padding-number">
-                                            <button className="btn text-white fs-4" onClick={() =>this.InputFunction(1)}>1</button>
+                                            <button className="btn text-white fs-4 one" onClick={() => InputFunction(1)}>1</button>
                                         </div>
                                         <div className="col-sm-3 col-md-4 padding-number">
-                                            <button className="btn text-white fs-4" onClick={() =>this.InputFunction(2)}>2</button>
+                                            <button className="btn text-white fs-4 two" onClick={() => InputFunction(2)}>2</button>
                                         </div>
                                         <div className="col-sm-3 col-md-4 padding-number">
-                                            <button className="btn text-white fs-4" onClick={() =>this.InputFunction(3)}>3</button>
+                                            <button className="btn text-white fs-4 three" onClick={() => InputFunction(3)}>3</button>
                                         </div>
                                     </div>
                                     <div className="row pb-3">
                                         <div className="col-sm-3 col-md-4 padding-number">
-                                            <button className="btn text-white fs-4" onClick={() =>this.InputFunction(0)}>0</button>
+                                            <button className="btn text-white fs-4 zero" onClick={() => InputFunction(0)}>0</button>
                                         </div>
                                         <div className="col-sm-3 col-md-4 padding-number">
-                                            <button className="btn text-white fs-4" onClick={() =>this.InputFunction('.')}>.</button>
+                                            <button className="btn text-white fs-4 dot" onClick={() => InputFunction('.')}>.</button>
                                         </div>
                                         <div className="col-sm-3 col-md-4 padding-number">
-                                                <button className="btn text-white fs-4" onClick={() =>this.InputFunction('=')}>
+                                                <button className="btn text-white fs-4 equal" onClick={() => InputFunction('=')}>
                                                     <FaEquals/>
                                                 </button>
                                         </div>
@@ -139,27 +144,27 @@ class Task2 extends Component{
                                 </div>
                                 <div className="col-md-4 col-sm-3">
                                     <div className="col-sm-11 col-md-12">
-                                        <button className="btn text-white fs-4 mr-4" onClick={() =>this.InputFunction('b')}>
+                                        <button className="btn text-white fs-4 mr-4" onClick={() => InputFunction('b')}>
                                             <FaBackspace/>
                                         </button>
                                     </div>
                                     <div className="col-sm-11 col-md-12">
-                                        <button className="btn text-white fs-4" onClick={() =>this.InputFunction('/')}>
+                                        <button className="btn text-white fs-4" onClick={() => InputFunction('/')}>
                                             <FaDivide/>
                                         </button>
                                     </div>
                                     <div className="col-sm-11 col-md-12">
-                                        <button className="btn text-white fs-4" onClick={() =>this.InputFunction('x')}>
+                                        <button className="btn text-white fs-4" onClick={() => InputFunction('x')}>
                                             <FaTimes/>
                                         </button>
                                     </div>
                                     <div className="col-sm-11 col-md-12">
-                                        <button className="btn text-white fs-4" onClick={() =>this.InputFunction('+')}>
+                                        <button className="btn text-white plus fs-4" onClick={() => InputFunction('+')}>
                                             <FaPlus/>
                                         </button>
                                     </div>
                                     <div className="col-sm-11 col-md-12">
-                                        <button className="btn text-white fs-4" onClick={() =>this.InputFunction('-')}>
+                                        <button className="btn text-white fs-4" onClick={() => InputFunction('-')}>
                                             <FaMinus/>
                                         </button>
                                     </div>
@@ -170,7 +175,6 @@ class Task2 extends Component{
                 </div>
             </div>
         )
-    }
 }
 
 export default Task2
