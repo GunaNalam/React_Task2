@@ -17,10 +17,21 @@
     padding-bottom: 5rem;
 }
 
-/* .padding-number{
-    padding-top: 9.5px;
-} */
-
 .col-md-4>button{
     margin-top: 12px;
 }
+::-webkit-scrollbar {
+    width: 0px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: #172d67;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #172d67;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: #172d67;
+  }
